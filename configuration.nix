@@ -279,6 +279,8 @@
        paths = [ pkgs.texLive
                  pkgs.texLiveExtra
                  pkgs.texLiveBeamer
+                 pkgs.lmodern # hidden dependency of xetex
+                 pkgs.tipa    # hidden dependency of xetex
                ];
        })
 
@@ -290,7 +292,6 @@
      dunst
      emacs
      fontconfig
-     gtk-engine-murrine
      haskellngPackages.yeganesh
      i3lock
      i3status
@@ -311,6 +312,10 @@
      xlibs.xev
      xlibs.xinput
      xlibs.xmessage
+     xlibs.xkill
+     xlibs.xgamma
+     xlibs.xset
+     xlibs.xrandr
      xss-lock
 
      # desktop apps
