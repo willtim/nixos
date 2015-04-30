@@ -170,6 +170,7 @@
       xkbOptions = "eurosign:e";
       windowManager.i3.enable = true;
       windowManager.default = "i3";
+      displayManager.desktopManagerHandlesLidAndPower=false;
       displayManager.lightdm = {
         enable = true;
       };
@@ -377,7 +378,6 @@
 
   services.logind.extraConfig = ''
     HandleLidSwitch=suspend
-    LidSwitchIgnoreInhibited=yes
   '';
 
   # custom services
