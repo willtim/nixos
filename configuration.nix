@@ -187,10 +187,10 @@
     chromium.enableGoogleTalkPlugin = true;
   };
 
-
   environment.shellAliases = {
-    "l"   = "ls";
-    "ll"  = "ls -al";
+    "ll"  = "ls -alF";
+    "la"  = "ls -A";
+    "l"   = "ls -CF";
     ".."  = "cd ..";
     "..." = "cd ../..";
     "..2" = "cd ../..";
@@ -224,21 +224,18 @@
      gitAndTools.gitFull
      gitAndTools.gitAnnex
      gnupg
-     graphviz
      gzip
      hdparm
      htop            # multicore cpu monitoring
      iotop           # i/o monitoring
      iftop           # network monitoring
      iptables
-     imagemagick
      lzma            # xz compressor
      lsof            # list open files
      lshw            # list hardware
      ltrace
      manpages
      mosh            # mobile shell (ssh alternative)
-     mupdf           # fast pdf viewer lib
      netcat
      nettools
      nix-repl
@@ -250,7 +247,6 @@
      pciutils
      pmutils
      psmisc          # fuser, killall, pstree, peekfd
-     poppler         # pdf utils
      powertop
      p7zip
      rfkill          # query, enable and disable wireless devices
@@ -274,40 +270,19 @@
      zsh
      zip
 
-     # Latex/Xetex
-     (pkgs.texLiveAggregationFun {
-       paths = [ pkgs.texLive
-                 pkgs.texLiveExtra
-                 pkgs.texLiveBeamer
-                 pkgs.lmodern # hidden dependency of xetex
-                 pkgs.tipa    # hidden dependency of xetex
-               ];
-       })
-
-     # desktop support
+     # minimal desktop
+     rxvt_unicode
      compton
-     conky
-     cmst # connman UI
      dmenu
      dunst
-     emacs
      fontconfig
-     haskellngPackages.yeganesh
      i3lock
      i3status
      libnotify
-     nitrogen
-     pavucontrol
-     python34Packages.udiskie
-     rdesktop
-     rxvt_unicode
-     scrot           # screen capture util
-     # termite       # terminal emulator with fontconfig support
-     unclutter
-     weechat
-     wmname          # set the windowmanager name
      xfontsel
      xclip
+     xss-lock
+
      xlibs.xmodmap
      xlibs.xev
      xlibs.xinput
@@ -316,34 +291,7 @@
      xlibs.xgamma
      xlibs.xset
      xlibs.xrandr
-     xss-lock
-
-     # desktop apps
-     chromium
-     clawsMail
-     dropbox
-     libreoffice
-     mendeley
-     gnuplot_qt
-     gtypist
-     gimp
-     inkscape
-     # viber         # VOIP/Chat with 64-bits
-     # tomahawk      # music player
-     skype
-     vlc
-     zathura
-     zathuraCollection.zathura_pdf_mupdf
-     zathuraCollection.zathura_djvu
-     zathuraCollection.zathura_ps
-
-     # other packages (debian names)
-     # autoconf
-     # avahi (aka zeroconf?
-     # quvi
-     # sed
-     # ufw
-     # gdisk
+     xlibs.xprop
   ];
 
   fonts = {
