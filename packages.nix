@@ -55,7 +55,6 @@ with (import <nixpkgs> {});
   inherit
      # desktop apps
      chromium
-     clawsMail
      dropbox
      libreoffice
      mendeley
@@ -68,11 +67,34 @@ with (import <nixpkgs> {});
      skype
      vlc
      zathura
- ;
 
- inherit (zathuraCollection)
+     rofi            # drop-in dmenu replacement (xft support)
+     python27Full    # put python in nix-profile
+  ;
+
+  myClawsMail = pkgs.clawsMail.override {
+      enablePgp  = true;
+      enablePluginFancy = true;
+      enablePluginNotificationDialogs = false;
+      enablePluginNotificationSounds  = false;
+      enablePluginPdf = true;
+      enablePluginVcalendar = true;
+      enableSpellcheck = true;
+  };
+
+
+  inherit(python27Packages)
+     pip     # use --user to install e.g. gcalcli locally
+     notify
+     dbus
+     pygobject
+     pycairo
+     pygtk
+  ;
+
+  inherit (zathuraCollection)
      zathura_pdf_mupdf
      zathura_djvu
      zathura_ps
- ;
+  ;
 }

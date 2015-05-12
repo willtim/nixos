@@ -282,6 +282,7 @@
      xfontsel
      xclip
      xss-lock
+     xsel
 
      xlibs.xmodmap
      xlibs.xev
