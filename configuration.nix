@@ -236,6 +236,7 @@
      ltrace
      manpages
      mosh            # mobile shell (ssh alternative)
+     ncdu            # disk-usage analysis
      netcat
      nettools
      nix-repl
