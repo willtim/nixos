@@ -84,6 +84,12 @@
     fsType = "ext4";
     options = "discard,noatime";
   };
+  fileSystems."/sandisk" = {
+    label = "sandisk";
+    device = "/dev/sdb";
+    fsType = "btrfs";
+    options = "ssd,discard,noatime";
+  };
   swapDevices = [ { device = "/dev/sda5"; } ];
 
 
@@ -202,8 +208,9 @@
   environment.systemPackages = with pkgs; [
      aspell
      aspellDicts.en
-     bzip2
      bc
+     btrfs-progs
+     bzip2
      cdparanoia
      colordiff
      coreutils
@@ -230,6 +237,18 @@
      iotop           # i/o monitoring
      iftop           # network monitoring
      iptables
+
+     # LaTex/XeTex is in configuration.nix as it is expensive to build/rebuild and has been broken
+     # before in unstable
+     (pkgs.texLiveAggregationFun {
+       paths = [ pkgs.texLive
+                 pkgs.texLiveExtra
+                 pkgs.texLiveBeamer
+                 pkgs.lmodern # hidden dependency of xetex
+                 pkgs.tipa    # hidden dependency of xetex
+               ];
+       })
+
      lzma            # xz compressor
      lsof            # list open files
      lshw            # list hardware
@@ -254,6 +273,7 @@
      rsync
      s3cmd           # manipulate Amazon S3 buckets
      screen
+     sharutils       # uuencode/decode
      smartmontools
      sudo
      sysstat

@@ -3,17 +3,20 @@
 # Install all the packages and remove everything else:
 #    nix-env -f packages.nix -ir
 #
+# NOTE: config overrides in ~/.nixpkgs/config.nix
+#
 with (import <nixpkgs> {});
 {
 
   inherit
      # desktop support
      conky
-     cmst # connman UI
+     cmst            # connman UI
      emacs
      mupdf           # fast pdf viewer lib
-     nitrogen
-     pavucontrol
+     nitrogen        # background previewer/setter
+     pavucontrol     # audio mixer
+     copyq           # clipboard manager
      rdesktop
 
      scrot           # screen capture util
@@ -23,28 +26,16 @@ with (import <nixpkgs> {});
      wmname          # set the windowmanager name
 
      # utils
+     feh             # image viewer, useful to call with -ZFx
+     sxiv            # simple image viewer, alternative to feh
      poppler         # pdf library and utils
      graphviz
      imagemagick
   ;
 
-  # Latex/Xetex
-  texLive = (pkgs.texLiveAggregationFun {
-       paths = [ pkgs.texLive
-                 pkgs.texLiveExtra
-                 pkgs.texLiveBeamer
-                 pkgs.lmodern # hidden dependency of xetex
-                 pkgs.tipa    # hidden dependency of xetex
-               ];
-       });
-
   inherit (haskellngPackages)
      yeganesh
      pandoc
-  ;
-
-  inherit (python34Packages)
-     udiskie
   ;
 
   inherit (gnome3)
@@ -55,15 +46,23 @@ with (import <nixpkgs> {});
   inherit
      # desktop apps
      chromium
+     firefox
+     thunderbird
      dropbox
      libreoffice
      mendeley
      gnuplot_qt
      gtypist
      gimp
-     inkscape
+     clementine      # music player
+     inkscape        # vector drawing
+     digikam         # photo management/viewer
+
+     recoll          # xapian search engine UI
+     xarchiver       # simple UI to browse archives
+     httrack         # website downloader
+
      # viber         # VOIP/Chat with 64-bits
-     # tomahawk      # music player
      skype
      vlc
      zathura
@@ -72,18 +71,13 @@ with (import <nixpkgs> {});
      python27Full    # put python in nix-profile
   ;
 
-  myClawsMail = pkgs.clawsMail.override {
-      enablePgp  = true;
-      enablePluginFancy = true;
-      enablePluginNotificationDialogs = false;
-      enablePluginNotificationSounds  = false;
-      enablePluginPdf = true;
-      enablePluginVcalendar = true;
-      enableSpellcheck = true;
-  };
-
+  #oraclejdk8 # cannot be auto-installed!!
+  #inherit(idea)
+  #   idea-community
+  #;
 
   inherit(python27Packages)
+     ranger  # fast file-browsing via console
      pip     # use --user to install e.g. gcalcli locally
      notify
      dbus
