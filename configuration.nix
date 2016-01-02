@@ -138,10 +138,10 @@
     # nixosManual.showManual = true;
 
     # CUPS printing
-    printing.enable = true;
-
-    # thinkfan.enable = true;
-    # thinkfan.sensor = "/sys/class/hwmon/hwmon1/temp1_input";
+    printing = {
+      enable = true;
+      drivers = [ pkgs.hplipWithPlugin ];
+    };
 
     # udev.packages = with pkgs; [ ];
     # udev.extraRules = ''...'';
@@ -209,7 +209,7 @@
      aspell
      aspellDicts.en
      bc
-     btrfs-progs
+     btrfsProgs
      bzip2
      cdparanoia
      colordiff
