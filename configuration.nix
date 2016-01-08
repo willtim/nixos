@@ -6,7 +6,7 @@
       ./hardware-configuration.nix
     ];
 
-  # boot.kernelPackages = pkgs.linuxPackages_3_18;
+  boot.kernelPackages = pkgs.linuxPackages_4_3;
   boot.kernelModules       = [ "tp_smapi" "kvm-intel" ];
   boot.extraModulePackages = [ config.boot.kernelPackages.tp_smapi ];
   boot.blacklistedKernelModules = [ "pcspkr" ];
@@ -164,6 +164,8 @@
       exportConfiguration = true;
       layout = "gb";
 
+      wacom.enable = true;  # for my bamboo stylus
+
       # multitouch.enable = true; # is this needed?
 
       # synaptics = {
@@ -218,6 +220,7 @@
      cpufrequtils
      cryptsetup
      curl
+     dvdplusrwtools  # contains growisofs for Blu-ray burning
      dos2unix
      diffstat
      diffutils
@@ -240,14 +243,14 @@
 
      # LaTex/XeTex is in configuration.nix as it is expensive to build/rebuild and has been broken
      # before in unstable
-     (pkgs.texLiveAggregationFun {
-       paths = [ pkgs.texLive
-                 pkgs.texLiveExtra
-                 pkgs.texLiveBeamer
-                 pkgs.lmodern # hidden dependency of xetex
-                 pkgs.tipa    # hidden dependency of xetex
-               ];
-       })
+     # (pkgs.texLiveAggregationFun {
+     #  paths = [ pkgs.texLive
+     #            pkgs.texLiveExtra
+     #            pkgs.texLiveBeamer
+     #            pkgs.lmodern # hidden dependency of xetex
+     #            pkgs.tipa    # hidden dependency of xetex
+     #          ];
+     #  })
 
      lzma            # xz compressor
      lsof            # list open files
@@ -385,4 +388,6 @@
     };
     wantedBy = ["multi-user.target"];
   };
+
+  virtualisation.docker.enable = true;
 }
