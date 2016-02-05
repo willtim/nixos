@@ -13,8 +13,13 @@
 
   boot.initrd.kernelModules = [
    # Specify all kernel modules that are necessary for mounting the root
-   # file system.
+   # file system. TODO "nvme"
    "fbcon" "vfat" "i915" "aesni-intel" "usb_storage" "ehci_pci" "uhci_hcd" "ahci"
+  ];
+
+  # only use intel_pstate on systems which support hardware p-state control (HWP)
+  boot.kernelParams = [
+    "intel_pstate=hwp_only"
   ];
 
   # Legacy BIOS booting
@@ -195,6 +200,10 @@
     chromium.enableGoogleTalkPlugin = true;
   };
 
+  environment.etc."fuse.conf".text = ''
+    user_allow_other
+  '';
+
   environment.shellAliases = {
     "ll"  = "ls -alF";
     "la"  = "ls -A";
@@ -208,13 +217,14 @@
 
   # system-wide packages
   environment.systemPackages = with pkgs; [
+     android-udev-rules  # needed by go-mtpfs
      aspell
      aspellDicts.en
      bc
      btrfsProgs
      bzip2
      cdparanoia
-     colordiff
+     # colordiff
      coreutils
      cpio
      cpufrequtils
@@ -226,7 +236,13 @@
      diffutils
      e2fsprogs
      file
-     flac
+     flac            # lossless audio encoder
+
+     libcdio         # abcde dependencies
+     cddiscid
+     eject
+     mkcue
+
      findutils
      gawk
      gdb
@@ -283,6 +299,7 @@
      traceroute
      time
      tree
+     unison          # bi-directional sync
      units
      unrar
      unzip
@@ -327,7 +344,7 @@
        pkgs.corefonts
        pkgs.ttf_bitstream_vera
        pkgs.vistafonts # e.g. consolas
-       pkgs.source-code-pro
+       # pkgs.source-code-pro
     ];
     fontconfig = {
       enable = true;
@@ -389,5 +406,5 @@
     wantedBy = ["multi-user.target"];
   };
 
-  virtualisation.docker.enable = true;
+  # virtualisation.docker.enable = true;
 }
