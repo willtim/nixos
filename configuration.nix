@@ -6,51 +6,45 @@
       ./hardware-configuration.nix
     ];
 
-  boot.kernelPackages = pkgs.linuxPackages_4_3;
-  boot.kernelModules       = [ "tp_smapi" "kvm-intel" ];
-  boot.extraModulePackages = [ config.boot.kernelPackages.tp_smapi ];
+  boot.kernelPackages = pkgs.linuxPackages_4_4;
+
+  # boot.kernelPackages = pkgs.linuxPackages_custom {
+  #   version = "3.18.1-custom";
+  #   src = pkgs.fetchurl {
+  #     url = "mirror://kernel/linux/kernel/v3.x/linux-3.18.1.tar.xz";
+  #     sha256 = "13m0s2m0zg304w86yvcmxgbjl41c4kc420044avi8rnr1xwcscsq";
+  #   };
+  #   configfile = /etc/nixos/customKernel.config; # cat /proc/config.gz | gunzip
+  # };
+
+  boot.kernelModules       = [ "kvm-intel" ]; # second-stage boot
+  boot.extraModulePackages = [ ];
   boot.blacklistedKernelModules = [ "pcspkr" ];
 
   boot.initrd.kernelModules = [
    # Specify all kernel modules that are necessary for mounting the root
-   # file system. TODO "nvme"
-   "fbcon" "vfat" "i915" "aesni-intel" "usb_storage" "ehci_pci" "uhci_hcd" "ahci"
+   # file system.
+   "fbcon" "vfat" "i915" "nvme" "btrfs" "nls_cp437" "nls_iso8859-1"
   ];
 
   # only use intel_pstate on systems which support hardware p-state control (HWP)
   boot.kernelParams = [
-    "intel_pstate=hwp_only"
+    # "intel_pstate=hwp_only" <-- cannot enable yet due to bugs
+    "intel_pstate=no_hwp"
   ];
 
-  # Legacy BIOS booting
-  boot.loader.grub.enable = true;
-  boot.loader.grub.version = 2;
-  boot.loader.grub.device = "/dev/sda";
+  boot.loader.gummiboot = {
+    enable = true;
+    timeout = 5;
+  };
 
-  # Crypto setup, set modules accordingly
-  # boot.initrd.luks.cryptoModules = [ "aes" "xts" "sha512" ];
-  #
-  # boot.loader.gummiboot = {
-  #   enable = true;
-  #   timeout = 5;
-  #  };
-  #
-  # boot.loader.efi = {
-  #   canTouchEfiVariables = true;
-  #   efibootmgr = {
-  #     efidisk = "/dev/sda";
-  #     efipartition = 1;
-  #   };
-  # };
-
-  # boot.initrd.luks.devices = [
-  #   {
-  #     name = "root";
-  #     device = "/dev/sda2";
-  #     preLVM = true;
-  #     allowDiscards = true;
-  #   }
-  # ];
+  boot.loader.efi = {
+    canTouchEfiVariables = true;
+    efibootmgr = {
+      efidisk = "/dev/??";
+      efipartition = 1;
+    };
+  };
 
   # Select internationalisation properties.
   i18n = {
@@ -64,43 +58,30 @@
 
   # File systems
   # explicitly configure fileSystems here, not in hardware-configuration.nix
-  # fileSystems."/boot" = {
-  #   label = "efi";
-  #   device = "/dev/sda1";
-  #   fsType = "vfat";
-  # };
-  # fileSystems."/" = {
-  #   label = "root";
-  #   device = "/dev/vg/root";
-  #   fsType = "ext4";
-  #   options = "discard,noatime";
-  # };
-  # swapDevices = [ { device = "/dev/vg/swap"; } ];
-
+  fileSystems."/boot" = {
+    label = "efi";
+    device = "/dev/??1";
+    fsType = "vfat";
+  };
+  # note: currently with btrfs, most mount options (e.g. nodatacow, compress)
+  # apply to the whole filesystem; and cannot be set per sub-volume.
   fileSystems."/" = {
-    label = "root";
-    device = "/dev/sda1";
-    fsType = "ext4";
-    options = "discard,noatime";
+    label   = "root";
+    device  = "/dev/??3";
+    fsType  = "btrfs";
+    options = "subvol=root,ssd,discard,noatime,nodiratime,space_cache";
   };
   fileSystems."/home" = {
-    label = "home";
-    device = "/dev/sda3";
-    fsType = "ext4";
-    options = "discard,noatime";
+    label   = "home";
+    device  = "/dev/??3";
+    fsType  = "btrfs";
+    options = "subvol=home,ssd,discard,noatime,nodiratime,space_cache";
   };
-  fileSystems."/sandisk" = {
-    label = "sandisk";
-    device = "/dev/sdb";
-    fsType = "btrfs";
-    options = "ssd,discard,noatime";
-  };
-  swapDevices = [ { device = "/dev/sda5"; } ];
-
+  swapDevices = [ { device = "/dev/??2"; } ];
 
   # Network
   networking = {
-    hostName = "evil";  # Define your hostname.
+    hostName = "x1c";   # Define your hostname.
     enableIPv6 = false; # To make wifi work?
     firewall = {
       enable = true;
@@ -123,6 +104,7 @@
     thermald.enable = true;
     tlp.enable = true;
     locate.enable = true;
+    fprintd.enable = true; # finger-print daemon and PAM module
 
     # check this
     openssh = {
@@ -149,7 +131,6 @@
     };
 
     # udev.packages = with pkgs; [ ];
-    # udev.extraRules = ''...'';
 
     accounts-daemon.enable = true; # needed by lightdm
 
@@ -176,6 +157,10 @@
       # synaptics = {
       #   enable = true;
       #   twoFingerScroll = true;
+      #   buttonsMap = [ 1 3 2];
+      #   fingersMap = [ 0 0 0 ];
+      #   tapButtons = true;
+      #   vertEdgeScroll = false;
       #   maxSpeed = "5.0";  # what number here?
       #   accelFactor = "0"; # no acceleration?
       # }
@@ -217,14 +202,13 @@
 
   # system-wide packages
   environment.systemPackages = with pkgs; [
-     android-udev-rules  # needed by go-mtpfs
      aspell
      aspellDicts.en
      bc
      btrfsProgs
      bzip2
      cdparanoia
-     # colordiff
+     colordiff
      coreutils
      cpio
      cpufrequtils
@@ -258,7 +242,9 @@
      iptables
 
      # LaTex/XeTex is in configuration.nix as it is expensive to build/rebuild and has been broken
-     # before in unstable
+     # before in unstable.
+
+     # old style
      # (pkgs.texLiveAggregationFun {
      #  paths = [ pkgs.texLive
      #            pkgs.texLiveExtra
@@ -268,16 +254,25 @@
      #          ];
      #  })
 
+     # new style
+     (texlive.combine {
+      inherit (texlive) scheme-medium supertabular titlesec;
+      # more packages to be found at
+      # https://github.com/NixOS/nixpkgs/blob/master/pkgs/tools/typesetting/tex/texlive-new/pkgs.nix if needed
+     })
+
      lzma            # xz compressor
      lsof            # list open files
      lshw            # list hardware
      ltrace
      manpages
      mosh            # mobile shell (ssh alternative)
+     mg              # micro-emacs
      ncdu            # disk-usage analysis
      netcat
      nettools
      nix-repl
+     nox             # nixos package search
      nmap
      nasm            # assembler
      openssh
@@ -318,8 +313,10 @@
      dunst
      fontconfig
      i3lock
-     i3status
+     # i3status
+     i3blocks
      libnotify
+     ponymix   # needed to output pulseaudio current volume
      xfontsel
      xclip
      xss-lock
@@ -336,6 +333,9 @@
      xlibs.xprop
   ];
 
+  # use micro-emacs as the default editor
+  environment.variables.EDITOR = pkgs.lib.mkOverride 0 "mg";
+
   fonts = {
     enableFontDir = true;
     enableCoreFonts = true; # MS proprietary Core Fonts
@@ -343,7 +343,8 @@
     fonts = [
        pkgs.corefonts
        pkgs.ttf_bitstream_vera
-       pkgs.vistafonts # e.g. consolas
+       pkgs.vistafonts          # e.g. consolas
+       pkgs.font-awesome-ttf    # needed by my i3 config!
        # pkgs.source-code-pro
     ];
     fontconfig = {
@@ -369,6 +370,14 @@
       "video"
       "wheel"
     ];
+  };
+
+
+  services.udev = {
+    extraRules = ''
+      # For my Samsung Note 4 using go-mtpfs and fuse
+      SUBSYSTEMS=="usb", ATTRS{idVendor}=="04e8", ATTRS{idProduct}=="6860", MODE="0666", OWNER="tim"
+    '';
   };
 
   services.logind.extraConfig = ''

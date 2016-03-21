@@ -26,7 +26,7 @@ with (import <nixpkgs> {});
      wmname          # set the windowmanager name
 
      # utils
-     xflux           # colour temperature adjustment for night time
+     redshift        # colour temperature adjustment for night time (gradual unlike xflux)
      feh             # image viewer, useful to call with -ZFx
      sxiv            # simple image viewer, alternative to feh
      poppler         # pdf library and utils
@@ -38,6 +38,17 @@ with (import <nixpkgs> {});
      imagemagick
 
      wine            # for qaac
+
+     rofi            # drop-in dmenu replacement (xft support)
+     arandr          # generate xrandr commands
+     python27Full    # put python in nix-profile
+
+     # themes
+     arc-gtk-theme           # in my .gtkrc-2.0
+     gtk-engine-murrine      # hidden thunar dependency
+     numix-icon-theme        # in my .gtkrc-2.0
+     numix-icon-theme-circle
+     hicolor_icon_theme
   ;
 
   inherit (haskellngPackages)
@@ -45,10 +56,15 @@ with (import <nixpkgs> {});
      pandoc
   ;
 
-  inherit (gnome3)
-     gnome_themes_standard  # gtk2 and gtk3 themes
+  inherit (xfce)
+     thunar
+     exo
   ;
 
+  inherit (gnome3)
+     gnome_themes_standard  # gtk2 and gtk3 themes
+     gnome_icon_theme       # icons
+  ;
 
   inherit
      # desktop apps
@@ -63,8 +79,9 @@ with (import <nixpkgs> {});
      gimp
      inkscape        # vector drawing
      digikam         # photo management/viewer (needs kde themes below)
-     kdiff3
+     darktable       # RAW workflow
 
+     kdiff3          # diff/merge tool
      recoll          # xapian search engine UI
      xarchiver       # simple UI to browse archives
      httrack         # website downloader
@@ -72,15 +89,19 @@ with (import <nixpkgs> {});
      # viber         # VOIP/Chat with 64-bits
      skype
 
-     clementine      # music player - always check hardware is receiving 44.1Khz and no resampling is happening!
+     deadbeef        # music player - always check hardware is receiving 44.1Khz and no resampling is happening!
                      # use "pactl info" and e.g. cat /proc/asound/card0/pcm0p/sub0/hw_params
+                     # plugins inside ~/.local/lib/deadbeef
 
      vlc             # plays anything
      mpv             # good hardware video decoding
+     smplayer        # richer UI for mpv
+
+     # ardour        # DAW
+     # guitarix      # virtual amp
+
      zathura         # configure for mupdf in config.nix: zathura.useMupdf = true;
 
-     rofi            # drop-in dmenu replacement (xft support)
-     python27Full    # put python in nix-profile
   ;
 
   #oraclejdk8 # cannot be auto-installed!!
@@ -97,7 +118,6 @@ with (import <nixpkgs> {});
 
   inherit(python27Packages)
      udiskie # automounter
-     ranger  # fast file-browsing via console
      pip     # use --user to install e.g. gcalcli locally
      notify
      dbus
