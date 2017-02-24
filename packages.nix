@@ -26,11 +26,18 @@ with (import <nixpkgs> {});
      wmname          # set the windowmanager name
 
      # utils
+     # keepassx2       # qt-based password manager
+
+     llpp            # less-like pdf viewer using mupdf (in OCaml!)
+     ranger          # ncurses file browser
+
      redshift        # colour temperature adjustment for night time (gradual unlike xflux)
-     feh             # image viewer, useful to call with -ZFx
-     sxiv            # simple image viewer, alternative to feh
-     poppler         # pdf library and utils
+     # feh             # image viewer, useful to call with -ZFx
+     sxiv            # simple bloat-free image viewer with thumbnails
+
+     poppler_utils   # pdf library and utils
      go-mtpfs        # transfer files to android phone: go-mtpfs ~/mnt, fusermount -u ~/mnt
+     unetbootin      # make bootable USB keys from ISO images
 
      # abcde           # cd-ripping automation script - need 2.7.1+ for qaac
 
@@ -41,14 +48,7 @@ with (import <nixpkgs> {});
 
      rofi            # drop-in dmenu replacement (xft support)
      arandr          # generate xrandr commands
-     python27Full    # put python in nix-profile
-
-     # themes
-     arc-gtk-theme           # in my .gtkrc-2.0
-     gtk-engine-murrine      # hidden thunar dependency
-     numix-icon-theme        # in my .gtkrc-2.0
-     numix-icon-theme-circle
-     hicolor_icon_theme
+     # python27Full    # put python in nix-profile
   ;
 
   inherit (haskellngPackages)
@@ -56,19 +56,9 @@ with (import <nixpkgs> {});
      pandoc
   ;
 
-  inherit (xfce)
-     thunar
-     exo
-  ;
-
-  inherit (gnome3)
-     gnome_themes_standard  # gtk2 and gtk3 themes
-     gnome_icon_theme       # icons
-  ;
-
   inherit
      # desktop apps
-     chromium
+     # chromium
      firefox
      thunderbird
      dropbox
@@ -76,22 +66,24 @@ with (import <nixpkgs> {});
      mendeley
      gnuplot_qt
      gtypist
-     gimp
+     # gimp
+     krita
+
      inkscape        # vector drawing
-     digikam         # photo management/viewer (needs kde themes below)
-     darktable       # RAW workflow
+     # digikam         # photo management/viewer (needs kde themes below)
+     # darktable       # RAW workflow
+     # xournal         # tablet note taking
 
      kdiff3          # diff/merge tool
      recoll          # xapian search engine UI
      xarchiver       # simple UI to browse archives
      httrack         # website downloader
 
-     # viber         # VOIP/Chat with 64-bits
-     skype
-
-     deadbeef        # music player - always check hardware is receiving 44.1Khz and no resampling is happening!
-                     # use "pactl info" and e.g. cat /proc/asound/card0/pcm0p/sub0/hw_params
-                     # plugins inside ~/.local/lib/deadbeef
+     deadbeef-with-plugins  # music player
+         # always check hardware is receiving 44.1Khz and no resampling
+         # is happening!
+         # use "pactl info" and e.g. cat /proc/asound/card0/pcm0p/sub0/hw_params
+         # plugins inside ~/.local/lib/deadbeef
 
      vlc             # plays anything
      mpv             # good hardware video decoding
@@ -100,21 +92,16 @@ with (import <nixpkgs> {});
      # ardour        # DAW
      # guitarix      # virtual amp
 
-     zathura         # configure for mupdf in config.nix: zathura.useMupdf = true;
+     zathura-with-plugins  # configure for mupdf in config.nix: zathura.useMupdf = true;
 
   ;
 
-  #oraclejdk8 # cannot be auto-installed!!
-  #inherit(idea)
-  #   idea-community
-  #;
-
-  inherit(kde4)
-     kde_workspace  # dark theme for digikam (!)
-     kde_baseapps
-     kdeadmin
-     desktopthemes
-  ;
+  # inherit(kde4)
+  #    kde_workspace  # dark theme for digikam (!)
+  #    kde_baseapps
+  #    kdeadmin
+  #    desktopthemes
+  # ;
 
   inherit(python27Packages)
      udiskie # automounter
