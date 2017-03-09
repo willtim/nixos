@@ -1,7 +1,7 @@
 { config, pkgs, expr, buildVM, ... }:
 
 let
-  iconTheme = pkgs.kde5.breeze-icons.out;
+  iconTheme = pkgs.breeze-icons.out;
   themeEnv = ''
     # QT: remove local user overrides (for determinism, causes hard to find bugs)
     rm -f ~/.config/Trolltech.conf
@@ -10,7 +10,7 @@ let
     rm -f ~/.config/gtk-3.0/settings.ini
 
     # GTK3: add breeze theme to search path for themes
-    # (currently, we need to use gnome-breeze because the GTK3 version of kde5.breeze is broken)
+    # (currently, we need to use gnome-breeze because the GTK3 version of breeze is broken)
     export XDG_DATA_DIRS="${pkgs.gnome-breeze}/share:$XDG_DATA_DIRS"
 
     # GTK3: add /etc/xdg/gtk-3.0 to search path for settings.ini
@@ -18,7 +18,7 @@ let
     export XDG_CONFIG_DIRS="/etc/xdg:$XDG_CONFIG_DIRS"
 
     # GTK2 theme + icon theme
-    export GTK2_RC_FILES=${pkgs.writeText "iconrc" ''gtk-icon-theme-name="breeze"''}:${pkgs.kde5.breeze-gtk}/share/themes/Breeze/gtk-2.0/gtkrc:$GTK2_RC_FILES
+    export GTK2_RC_FILES=${pkgs.writeText "iconrc" ''gtk-icon-theme-name="breeze"''}:${pkgs.breeze-gtk}/share/themes/Breeze/gtk-2.0/gtkrc:$GTK2_RC_FILES
 
     # SVG loader for pixbuf (needed for GTK svg icon themes)
     export GDK_PIXBUF_MODULE_FILE=$(echo ${pkgs.librsvg.out}/lib/gdk-pixbuf-2.0/*/loaders.cache)
@@ -153,10 +153,7 @@ environment.systemPackages = with pkgs; [
   dunst
   fontconfig
   i3lock
-  # i3blocks
-  polybar
-  redshift
-  rofi
+  i3blocks
   libnotify
   xfontsel
   xclip
@@ -178,28 +175,28 @@ environment.systemPackages = with pkgs; [
   xlibs.xprop
 
   # GTK theme
-  kde5.breeze-gtk
+  breeze-gtk
   gnome-breeze
   gnome3.gnome_themes_standard
-  gnome_icon_theme
-  gtk-engine-murrine # sometimes a hidden dependency
 
   # Qt theme
-  kde5.breeze-qt5
-  kde5.breeze-qt4
+  breeze-qt5
+  breeze-qt4
 
   # Icons (Main)
   iconTheme
 
   # Icons (Fallback)
-  kde5.oxygen-icons5
+  oxygen-icons5
   gnome3.adwaita-icon-theme
   hicolor_icon_theme
 
   # These packages are used in autostart, they need to in systemPackages
   # or icons won't work correctly
-  pythonPackages.udiskie connman-notify
+  pythonPackages.udiskie connman-notify # skype
 
+  firefox
+  thunderbird
 ];
 
 # Make applications find files in <prefix>/share
