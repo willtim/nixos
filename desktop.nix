@@ -153,7 +153,7 @@ environment.systemPackages = with pkgs; [
   dunst
   fontconfig
   i3lock
-  i3blocks
+  polybar
   libnotify
   xfontsel
   xclip
