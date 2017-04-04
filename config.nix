@@ -3,9 +3,11 @@
 
 packageOverrides = super: let self = super.pkgs; in with self; rec {
 
-  ghcEnv = pkgs.myEnvFun {
-    name = "ghc";
-    buildInputs = with haskellPackages; [
+  # TODO change to a function
+  # http://stackoverflow.com/questions/27728838/using-hoogle-in-a-haskell-development-environment-on-nix
+  ghcEnv = pkgs.buildEnv {
+    name = "ghc-env";
+    paths = with haskellPackages; [
       (ghcWithHoogle (import ~/nixos/haskell-packages.nix))
       alex happy cabal-install cabal2nix
       ghc-core
