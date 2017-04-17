@@ -206,8 +206,6 @@ environment.systemPackages = with pkgs; [
   # or icons won't work correctly
   pythonPackages.udiskie connman-notify # skype
 
-  firefox
-  thunderbird
 ];
 
 # Make applications find files in <prefix>/share
