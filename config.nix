@@ -12,15 +12,14 @@ packageOverrides = super: let self = super.pkgs; in with self; rec {
       alex happy cabal-install cabal2nix
       ghc-core
       hlint
-      pointfree
+      # pointfree
       hasktags
-      ghc-mod
-      djinn mueval
+      # djinn mueval
       # lambdabot
       threadscope
       timeplot splot
       # liquidhaskell liquidhaskell-cabal
-      idris
+      # idris
       # Agda
       ];
     };
@@ -29,7 +28,8 @@ packageOverrides = super: let self = super.pkgs; in with self; rec {
   desktopEnv = pkgs.buildEnv {
      name = "desktop-support";
      paths = [
-         polybar         # status bar
+         # polybar         # status bar
+
          cmst            # connman UI
          nitrogen        # background previewer/setter
          pavucontrol     # audio mixer
@@ -140,6 +140,10 @@ packageOverrides = super: let self = super.pkgs; in with self; rec {
   chromium = {
     enablePepperFlash = true; # Chromium's non-NSAPI alternative to Adobe Flash
     enablePepperPDF = true;
+  };
+  
+  polybar = pkgs.polybar.override {
+    i3Support = true;
   };
 
 # These must be built from source to get official branding - takes a long time!

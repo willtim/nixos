@@ -137,6 +137,7 @@
      s3cmd           # manipulate Amazon S3 buckets
      sharutils       # uuencode/decode
      smartmontools
+     stow
      sudo
      sysstat
      tmux
@@ -152,7 +153,7 @@
      wget
      which
      zip
-     
+
      gnupg
      opensc
      pcsctools
@@ -189,5 +190,5 @@
   services.udev.packages  = [
       pkgs.libu2f-host
       pkgs.yubikey-personalization
-  ];  
+  ];
 }

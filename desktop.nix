@@ -31,6 +31,14 @@ in {
 
 imports = [];
 
+nixpkgs.config = {
+  packageOverrides = pkgs: rec {
+    polybar = pkgs.polybar.override {
+      i3Support = true;
+    };
+  };
+};
+
 fonts = {
     enableFontDir = true;
     enableCoreFonts = true; # MS proprietary Core Fonts
@@ -68,19 +76,26 @@ services.xserver = {
 
   # wacom.enable = true;  # for my bamboo stylus
 
-  multitouch.enable = true;
-  multitouch.ignorePalm = true;
-
-  synaptics = {
-     enable = true;
-     twoFingerScroll = true;
-     horizTwoFingerScroll = true;
-
-     buttonsMap = [ 1 3 2];
-     fingersMap = [ 0 0 0 ];
-     tapButtons = false;
-     vertEdgeScroll = false;
+  # use the touch-pad for scrolling
+  libinput = {
+    enable = true;
+    disableWhileTyping = true;
+    naturalScrolling = true;
+    scrollMethod = "twofinger";
+    tapping = false;
+    tappingDragLock = false;
   };
+
+  # synaptics = {
+  #    enable = true;
+  #    twoFingerScroll = true;
+  #    horizTwoFingerScroll = true;
+  #    palmDetect = true;
+  #    buttonsMap = [ 1 3 2];
+  #    fingersMap = [ 0 0 0 ];
+  #    tapButtons = false;
+  #    vertEdgeScroll = false;
+  # };
 
   xkbOptions = "eurosign:e";
   windowManager.i3.enable = true;
@@ -92,6 +107,13 @@ services.xserver = {
 #      user = "tim";
 #    };
   };
+
+  videoDrivers = [ "intel" ];
+  deviceSection = ''
+    Option "DRI" "3"
+    Option "TearFree" "true"
+  '';
+
   displayManager.sessionCommands = ''
      ${pkgs.xlibs.xsetroot}/bin/xsetroot -cursor_name left_ptr
 
@@ -118,7 +140,7 @@ services.xserver = {
      gpg-connect-agent /bye
      GPG_TTY=$(tty)
      export GPG_TTY
-     
+
      # use gpg-agent for SSH
      # NOTE: make sure enable-ssh-support is included in ~/.gnupg/gpg-agent.conf
      unset SSH_AGENT_PID
