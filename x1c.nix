@@ -18,12 +18,12 @@
 
   boot.kernelModules       = [ "kvm-intel" ]; # second-stage boot
   boot.extraModulePackages = [ ];
-  boot.blacklistedKernelModules = [ "pcspkr" ];
+  boot.blacklistedKernelModules = [ "pcspkr" "acer_wmi" ];
 
   boot.initrd.kernelModules = [
    # Specify all kernel modules that are necessary for mounting the root
    # file system.
-   "vfat" "i915" "nvme" "xfs" "dm_mod" "sd_mod" "xhci_pci" "usb_storage" "rtsx_pci_sdmmc" "nls_cp437" "nls_iso8859-1"
+   "vfat" "i915" "nvme" "xfs" "dm_mod" "sd_mod" "xhci_pci" "usb_storage" "rtsx_pci_sdmmc" "nls_cp437" "nls_iso8859-1" "aesni_intel"
   ];
 
   # only use intel_pstate on systems which support hardware p-state control (HWP)
@@ -89,7 +89,14 @@
   services = {
     acpid.enable = true;
     thermald.enable = true;
+
     tlp.enable = true;
+    tlp.extraConfig = ''
+      DEVICES_TO_DISABLE_ON_STARTUP="bluetooth wwan"
+      DEVICES_TO_ENABLE_ON_STARTUP="wifi"
+      DISK_DEVICES="nvme0n1"
+    '';
+
     locate.enable = true;
     # fprintd.enable = true; # finger-print daemon and PAM module
 

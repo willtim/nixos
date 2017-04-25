@@ -80,22 +80,24 @@ services.xserver = {
   libinput = {
     enable = true;
     disableWhileTyping = true;
-    naturalScrolling = true;
+    # naturalScrolling = true;
     scrollMethod = "twofinger";
     tapping = false;
     tappingDragLock = false;
   };
 
-  # synaptics = {
-  #    enable = true;
-  #    twoFingerScroll = true;
-  #    horizTwoFingerScroll = true;
-  #    palmDetect = true;
-  #    buttonsMap = [ 1 3 2];
-  #    fingersMap = [ 0 0 0 ];
-  #    tapButtons = false;
-  #    vertEdgeScroll = false;
-  # };
+  # consensus is that libinput gives better results
+  synaptics.enable = false;
+
+  config = ''
+      Section "InputClass"
+        Identifier     "Enable libinput for TrackPoint"
+        MatchIsPointer "on"
+        Driver         "libinput"
+        Option         "ScrollMethod" "button"
+        Option         "ScrollButton" "8"
+      EndSection
+    '';
 
   xkbOptions = "eurosign:e";
   windowManager.i3.enable = true;
@@ -118,7 +120,7 @@ services.xserver = {
      ${pkgs.xlibs.xsetroot}/bin/xsetroot -cursor_name left_ptr
 
      ${pkgs.xlibs.xrdb}/bin/xrdb -merge ~/.Xresources
-     ${pkgs.xlibs.xrdb}/bin/xrdb -merge /etc/X11/Xresources
+     # ${pkgs.xlibs.xrdb}/bin/xrdb -merge /etc/X11/Xresources
 
      # Assume laptop keyboard and swap Ctrl and Alt
      [ -f ~/.Xmodmap ] && xmodmap ~/.Xmodmap
@@ -130,11 +132,11 @@ services.xserver = {
      # Send notification after 10 mins of inactivity,
      # lock the screen 10 seconds later.
      # TODO nixify xss-lock scripts
-     ${pkgs.xlibs.xset}/bin/xset 600 10
+     ${pkgs.xlibs.xset}/bin/xset s 600 10
      ${pkgs.xss-lock}/bin/xss-lock -n ~/bin/lock-notify.sh -- ~/bin/lock.sh &
 
      # disable PC speaker beep
-     ${pkgs.xlibs.xset}/bin/xset -b
+     # ${pkgs.xlibs.xset}/bin/xset -b
 
      # gpg-agent for X session
      gpg-connect-agent /bye
@@ -205,6 +207,7 @@ environment.systemPackages = with pkgs; [
   xlibs.xgamma
   xlibs.xset
   xlibs.xrandr
+  xlibs.xrdb
   xlibs.xprop
 
   # GTK theme
@@ -230,10 +233,14 @@ environment.systemPackages = with pkgs; [
 
 ];
 
+# needed by mendeley
+services.dbus.packages = [ pkgs.gnome3.gconf.out ];
+
 # Make applications find files in <prefix>/share
-environment.pathsToLink = [ "/share" ];
+environment.pathsToLink = [ "/share" "/etc/gconf" ];
 
 services.udev = {
+    packages = [ pkgs.libmtp ];
     extraRules = ''
       # For my Samsung Note 4 using go-mtpfs and fuse
       SUBSYSTEMS=="usb", ATTRS{idVendor}=="04e8", ATTRS{idProduct}=="6860", MODE="0666", OWNER="tim"

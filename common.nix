@@ -65,6 +65,8 @@
      aspell
      aspellDicts.en
      bc
+     bmon # simple bandwidth monitor and rate estimator
+pwgen
      bzip2
      cdparanoia
      colordiff
@@ -77,7 +79,9 @@
      dos2unix
      diffstat
      diffutils
-     e2fsprogs
+     dhex            # hex editor with diff
+     dmidecode       # read and display firmware info
+
      file
      flac            # lossless audio encoder
 
@@ -100,14 +104,14 @@
      iftop           # network monitoring
      iptables
 
-     # LaTex/XeTex is in configuration.nix as it is expensive to build/rebuild and has been broken
+     # LaTex/XeTex is here in configuration.nix as it is expensive to build/rebuild and has been broken
      # before in unstable.
      # new style
-     # (texlive.combine {
-     #  inherit (texlive) scheme-medium supertabular titlesec;
-     #  # more packages to be found at
-     #  # https://github.com/NixOS/nixpkgs/blob/master/pkgs/tools/typesetting/tex/texlive-new/pkgs.nix if needed
-     # })
+     (texlive.combine {
+       inherit (texlive) scheme-medium supertabular titlesec;
+       # more packages to be found at
+       # https://github.com/NixOS/nixpkgs/blob/master/pkgs/tools/typesetting/tex/texlive-new/pkgs.nix if needed
+     })
 
      lzma            # xz compressor
      lsof            # list open files
@@ -130,10 +134,14 @@
      pmutils
      psmisc          # fuser, killall, pstree, peekfd
      powertop
+     pwgen
      p7zip
+
      rfkill          # query, enable and disable wireless devices
      rlwrap          # readline wrap
      rsync
+
+     silver-searcher # a.k.a. ag
      s3cmd           # manipulate Amazon S3 buckets
      sharutils       # uuencode/decode
      smartmontools
@@ -152,6 +160,7 @@
      vim
      wget
      which
+     xfsprogs        # XFS filesystem utils
      zip
 
      gnupg
@@ -164,6 +173,8 @@
 
   # use micro-emacs as the default editor
   environment.variables.EDITOR = pkgs.lib.mkOverride 0 "mg";
+
+  programs.bash.enableCompletion = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.defaultUserShell = "/var/run/current-system/sw/bin/bash";

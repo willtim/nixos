@@ -8,7 +8,7 @@ packageOverrides = super: let self = super.pkgs; in with self; rec {
   ghcEnv = pkgs.buildEnv {
     name = "ghc-env";
     paths = with haskellPackages; [
-      (ghcWithHoogle (import ~/nixos/haskell-packages.nix))
+      (ghcWithHoogle (import ./haskell-packages.nix))
       alex happy cabal-install cabal2nix
       ghc-core
       hlint
@@ -19,7 +19,7 @@ packageOverrides = super: let self = super.pkgs; in with self; rec {
       threadscope
       timeplot splot
       # liquidhaskell liquidhaskell-cabal
-      # idris
+      idris
       # Agda
       ];
     };
@@ -99,6 +99,7 @@ packageOverrides = super: let self = super.pkgs; in with self; rec {
          # ardour        # DAW
          # guitarix      # virtual amp
 
+         llpp            # less-style PDF reader in OCaml
          zathura         # configure for mupdf: zathura.useMupdf = true;
 
          rdesktop        # windows RDP client
@@ -112,12 +113,15 @@ packageOverrides = super: let self = super.pkgs; in with self; rec {
          graphviz
          imagemagick
 
-         wine            # for qaac
+         wine            # for qaac and neroAacTag
 
          # python27Full    # put python in nix-profile
 
          haskellPackages.yeganesh
          haskellPackages.pandoc
+
+         youtube-dl
+         anki            # flashcards
 
          # kde_workspace  # dark theme for digikam (!)
          # kde_baseapps
@@ -141,7 +145,7 @@ packageOverrides = super: let self = super.pkgs; in with self; rec {
     enablePepperFlash = true; # Chromium's non-NSAPI alternative to Adobe Flash
     enablePepperPDF = true;
   };
-  
+
   polybar = pkgs.polybar.override {
     i3Support = true;
   };
