@@ -108,7 +108,7 @@ pwgen
      # before in unstable.
      # new style
      (texlive.combine {
-       inherit (texlive) scheme-medium supertabular titlesec;
+       inherit (texlive) scheme-medium supertabular titlesec tikz-qtree;
        # more packages to be found at
        # https://github.com/NixOS/nixpkgs/blob/master/pkgs/tools/typesetting/tex/texlive-new/pkgs.nix if needed
      })

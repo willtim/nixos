@@ -1,6 +1,5 @@
 { pkgs }: {
 
-
 packageOverrides = super: let self = super.pkgs; in with self; rec {
 
   # TODO change to a function
@@ -9,7 +8,8 @@ packageOverrides = super: let self = super.pkgs; in with self; rec {
     name = "ghc-env";
     paths = with haskellPackages; [
       (ghcWithHoogle (import ./haskell-packages.nix))
-      alex happy cabal-install cabal2nix
+      alex happy 
+      # cabal-install cabal2nix
       ghc-core
       hlint
       # pointfree
@@ -24,10 +24,11 @@ packageOverrides = super: let self = super.pkgs; in with self; rec {
       ];
     };
 
-  # desktop support packages for which we want regular updates for
+  # desktop support packages
   desktopEnv = pkgs.buildEnv {
      name = "desktop-support";
      paths = [
+         # moved to system packages
          # polybar         # status bar
 
          cmst            # connman UI
@@ -55,20 +56,22 @@ packageOverrides = super: let self = super.pkgs; in with self; rec {
          ];
   };
 
-  # large app packages for which we want regular updates for
+  # large app packages
   appsEnv = pkgs.buildEnv {
      name = "apps";
      paths = [
+         # install and upgrade these manually
+         # google-chrome
+         # mendeley
+         # dropbox
+
          emacs
 
          # chromium
          # firefox
-         google-chrome
          thunderbird
 
-         dropbox
          libreoffice
-         mendeley
          gnuplot_qt
          gtypist
          # gimp
@@ -99,8 +102,7 @@ packageOverrides = super: let self = super.pkgs; in with self; rec {
          # ardour        # DAW
          # guitarix      # virtual amp
 
-         llpp            # less-style PDF reader in OCaml
-         zathura         # configure for mupdf: zathura.useMupdf = true;
+         # zathura         # configure for mupdf: zathura.useMupdf = true;
 
          rdesktop        # windows RDP client
 
