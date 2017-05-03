@@ -23,7 +23,7 @@
   boot.initrd.kernelModules = [
    # Specify all kernel modules that are necessary for mounting the root
    # file system.
-   "vfat" "i915" "nvme" "xfs" "dm_mod" "sd_mod" "xhci_pci" "usb_storage" "rtsx_pci_sdmmc" "nls_cp437" "nls_iso8859-1" "aesni_intel"
+   "vfat" "i915" "nvme" "xfs" "dm_mod" "sd_mod" "xhci_pci" "usb_storage" "rtsx_pci_sdmmc" "nls_cp437" "nls_iso8859-1" "aesni_intel" "thinkpad_acpi"
   ];
 
   # only use intel_pstate on systems which support hardware p-state control (HWP)
@@ -116,6 +116,15 @@
     };
 
     # udev.packages = with pkgs; [ ];
+
+    # Get my volume buttons working
+    # libinput does not seem to work.
+    udev.extraHwdb = ''
+      evdev:input:b0003v17aap5054*
+        KEYBOARD_KEY_a0=mute
+        KEYBOARD_KEY_ae=volumedown
+        KEYBOARD_KEY_b0=volumeup
+    '';
 
   };
 

@@ -62,6 +62,8 @@
 
   # system-wide packages
   environment.systemPackages = with pkgs; [
+     acpi
+     acpid
      aspell
      aspellDicts.en
      bc

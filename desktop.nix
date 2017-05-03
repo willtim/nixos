@@ -199,6 +199,7 @@ environment.systemPackages = with pkgs; [
   nitrogen # better multihead support than feh
   pinentry_qt4
 
+  xlibs.xbacklight
   xlibs.xmodmap
   xlibs.xev
   xlibs.xinput

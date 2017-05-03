@@ -142,7 +142,7 @@
     # check this
     openssh = {
       enable = true;
-      passwordAuthentication = true;
+      passwordAuthentication = false;
     };
   };
 

@@ -69,7 +69,7 @@ packageOverrides = super: let self = super.pkgs; in with self; rec {
 
          # chromium
          # firefox
-         thunderbird
+         # thunderbird
 
          libreoffice
          gnuplot_qt
