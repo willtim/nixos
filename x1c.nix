@@ -117,13 +117,18 @@
 
     # udev.packages = with pkgs; [ ];
 
-    # Get my volume buttons working
-    # libinput does not seem to work.
+    # Perform keyboard mappings specific to the X1C laptop keyboard.
+    # My Kinesis handles its own mappings.
     udev.extraHwdb = ''
-      evdev:input:b0003v17aap5054*
+      evdev:atkbd:dmi:*
         KEYBOARD_KEY_a0=mute
         KEYBOARD_KEY_ae=volumedown
         KEYBOARD_KEY_b0=volumeup
+        KEYBOARD_KEY_3a=tab
+        KEYBOARD_KEY_1d=leftalt
+        KEYBOARD_KEY_38=leftctrl
+        KEYBOARD_KEY_9d=leftalt
+        KEYBOARD_KEY_b8=rightctrl
     '';
 
   };

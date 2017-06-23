@@ -110,9 +110,9 @@ pwgen
      # before in unstable.
      # new style
      (texlive.combine {
-       inherit (texlive) scheme-medium supertabular titlesec tikz-qtree;
+       inherit (texlive) scheme-medium collection-latexextra supertabular titlesec tikz-qtree;
        # more packages to be found at
-       # https://github.com/NixOS/nixpkgs/blob/master/pkgs/tools/typesetting/tex/texlive-new/pkgs.nix if needed
+       # https://github.com/NixOS/nixpkgs/blob/master/pkgs/tools/typesetting/tex/texlive/pkgs.nix if needed
      })
 
      lzma            # xz compressor

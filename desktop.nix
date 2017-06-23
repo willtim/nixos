@@ -122,7 +122,6 @@ services.xserver = {
      ${pkgs.xlibs.xrdb}/bin/xrdb -merge ~/.Xresources
      # ${pkgs.xlibs.xrdb}/bin/xrdb -merge /etc/X11/Xresources
 
-     # Assume laptop keyboard and swap Ctrl and Alt
      [ -f ~/.Xmodmap ] && xmodmap ~/.Xmodmap
 
      # background image - nitrogen has better multihead support than feh
