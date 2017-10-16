@@ -19,6 +19,7 @@
   boot.kernelModules       = [ "kvm-intel" ]; # second-stage boot
   boot.extraModulePackages = [ ];
   boot.blacklistedKernelModules = [ "pcspkr" "acer_wmi" ];
+  boot.kernelPackages = pkgs.linuxPackages_4_12;
 
   boot.initrd.kernelModules = [
    # Specify all kernel modules that are necessary for mounting the root
@@ -76,6 +77,9 @@
 
   powerManagement.enable = true;
 
+  # latest fixes for buggy skylake
+  hardware.cpu.intel.updateMicrocode = true;
+
   # needed for intel wifi
   hardware.enableAllFirmware = true;
 
@@ -103,7 +107,7 @@
     # check this
     openssh = {
       enable = true;
-      passwordAuthentication = false;
+      passwordAuthentication = true;
     };
 
     # enable nixos manual on virtual console 8
@@ -131,6 +135,33 @@
         KEYBOARD_KEY_b8=rightctrl
     '';
 
+    # Maximum trackpoint sensitivity and speed
+    udev.extraRules = ''
+    KERNEL=="serio2", SUBSYSTEM=="serio", DRIVERS=="psmouse", ATTR{sensitivity}:="255", ATTR{speed}:="255"
+    '';
+  };
+
+  # psmouse driver attributes are not available at the right time during boot
+  # NOTE: systemd path unit, watching on the attributes, didn't work, never triggers
+  # systemd.paths.my-trackpoint = {
+  #   enable = true;
+  #   description = "Watch for, and modify, Trackpoint attributes";
+  #   pathConfig = {
+  #     PathExistsGlob = "/sys/devices/platform/i8042/serio1/serio2/{speed,sensitivity}";
+  #     Unit = "my-trackpoint.service";
+  #   };
+  #   wantedBy = [ "default.target" ];
+  # };
+  systemd.services.my-trackpoint = {
+    enable = true;
+    description = "Ensure udev trackpoint attributes are set";
+    requires = ["display-manager.service"];
+    serviceConfig = {
+      Type = "oneshot";
+      ExecStartPre = "/run/current-system/sw/bin/sleep 5"; # HACK
+      ExecStart = "/run/current-system/sw/bin/udevadm trigger --subsystem-match=serio";
+    };
+    wantedBy = ["multi-user.target"];
   };
 
   # custom services

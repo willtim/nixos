@@ -236,6 +236,9 @@ environment.systemPackages = with pkgs; [
 # needed by mendeley
 services.dbus.packages = [ pkgs.gnome3.gconf.out ];
 
+# needed by gtk apps
+services.gnome3.at-spi2-core.enable = true;
+
 # Make applications find files in <prefix>/share
 environment.pathsToLink = [ "/share" "/etc/gconf" ];
 

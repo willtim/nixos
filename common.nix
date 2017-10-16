@@ -97,7 +97,7 @@ pwgen
      gdb
      ghostscript
      gitAndTools.gitFull
-     gitAndTools.gitAnnex
+     # gitAndTools.gitAnnex
      gnupg
      gzip
      hdparm
