@@ -14,12 +14,12 @@
     ];
 
   # The NixOS release to be compatible with for stateful data such as databases.
-  system.stateVersion = "17.03";
+  system.stateVersion = "17.09";
 
   boot.kernelModules       = [ "kvm-intel" ]; # second-stage boot
   boot.extraModulePackages = [ ];
   boot.blacklistedKernelModules = [ "pcspkr" "acer_wmi" ];
-  boot.kernelPackages = pkgs.linuxPackages_4_12;
+  boot.kernelPackages = pkgs.linuxPackages_4_13;
 
   boot.initrd.kernelModules = [
    # Specify all kernel modules that are necessary for mounting the root
