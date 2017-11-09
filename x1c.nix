@@ -152,19 +152,19 @@
   #   };
   #   wantedBy = [ "default.target" ];
   # };
+  
   systemd.services.my-trackpoint = {
     enable = true;
-    description = "Ensure udev trackpoint attributes are set";
+    description = "Ensure trackpoint settings are set";
     requires = ["display-manager.service"];
+    after=["suspend.target"];
     serviceConfig = {
       Type = "oneshot";
-      ExecStartPre = "/run/current-system/sw/bin/sleep 5"; # HACK
-      ExecStart = "/run/current-system/sw/bin/udevadm trigger --subsystem-match=serio";
+      ExecStart = "/home/tim/bin/setup-trackpoint"; # waits for attributes to be present
     };
-    wantedBy = ["multi-user.target"];
+    wantedBy = ["multi-user.target" "suspend.target"];
   };
 
-  # custom services
   # systemd.services.my-backup = {
   #   enable = True;
   #   description = "My Backup";
@@ -173,26 +173,26 @@
   #   serviceConfig.ExecStart = /home/bfo/bin/backup.sh;
   # };
 
-  # systemd.services.low-battery-check = {
-  #   enable = true;
-  #   description = "LowBatteryCheck";
-  #   path = with pkgs; [ bash pmutils ];
-  #   serviceConfig = {
-  #     Type = "simple";
-  #     ExecStart = "/home/tim/bin/low-battery-check";
-  #   };
-  # };
+  systemd.services.low-battery-check = {
+    enable = true;
+    description = "LowBatteryCheck";
+    path = with pkgs; [ bash pmutils ];
+    serviceConfig = {
+      Type = "simple";
+      ExecStart = "/home/tim/bin/low-battery-check";
+    };
+  };
 
-  # systemd.timers.low-battery-check = {
-  #   unitConfig = {
-  #     Description = "Run low-battery-check every minute";
-  #   };
-  #   timerConfig = {
-  #     OnBootSec="2min";
-  #     OnUnitActiveSec="1min";
-  #     Unit="low-battery-check.service";
-  #   };
-  #   wantedBy = ["multi-user.target"];
-  # };
+  systemd.timers.low-battery-check = {
+    unitConfig = {
+      Description = "Run low-battery-check every minute";
+    };
+    timerConfig = {
+      OnBootSec="2min";
+      OnUnitActiveSec="1min";
+      Unit="low-battery-check.service";
+    };
+    wantedBy = ["multi-user.target"];
+  };
 
 }
