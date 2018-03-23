@@ -70,7 +70,9 @@
      bmon # simple bandwidth monitor and rate estimator
 pwgen
      bzip2
+     cabextract
      cdparanoia
+     cdrkit
      colordiff
      coreutils
      cpio
@@ -95,6 +97,7 @@ pwgen
      findutils
      gawk
      gdb
+     geteltorito
      ghostscript
      gitAndTools.gitFull
      # gitAndTools.gitAnnex
@@ -130,6 +133,7 @@ pwgen
      nmap
      nasm            # assembler
      openssh
+     openvpn
      pass            # password manager
      patchutils
      pciutils

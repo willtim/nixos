@@ -56,6 +56,19 @@ fonts = {
     };
   };
 
+# needed to unlock gnome_keyring
+# set the keyring password to be the same as the login
+security.pam.services = [
+  { name = "gnome_keyring";
+    text = ''
+      auth     optional    ${pkgs.gnome3.gnome_keyring}/lib/security/pam_gnome_keyring.so
+      session  optional    ${pkgs.gnome3.gnome_keyring}/lib/security/pam_gnome_keyring.so auto_start
+
+      password  optional    ${pkgs.gnome3.gnome_keyring}/lib/security/pam_gnome_keyring.so
+    '';
+  }
+];
+
 services.accounts-daemon.enable = true; # needed by lightdm
 
 # Required for our screen-lock-on-suspend functionality
@@ -124,6 +137,11 @@ services.xserver = {
 
      [ -f ~/.Xmodmap ] && xmodmap ~/.Xmodmap
 
+     # Restore color profile.
+     # this works around a bug in xiccd, whereby
+     # it doesn't die after logout
+     pgrep xiccd>/dev/null || ${pkgs.xiccd}/bin/xiccd &
+
      # background image - nitrogen has better multihead support than feh
      ${pkgs.nitrogen}/bin/nitrogen --restore
 
@@ -182,6 +200,7 @@ environment.systemPackages = with pkgs; [
   # i3 desktop support
   rxvt_unicode
   cmst
+  desktop_file_utils
   dmenu
   dunst
   fontconfig
@@ -194,8 +213,10 @@ environment.systemPackages = with pkgs; [
   xsel
   unclutter
 
+  argyllcms # create color profiles
+  xiccd     # color management
   compton
-  nitrogen # better multihead support than feh
+  nitrogen  # better multihead support than feh
   pinentry_qt4
 
   xlibs.xbacklight
@@ -209,11 +230,15 @@ environment.systemPackages = with pkgs; [
   xlibs.xrandr
   xlibs.xrdb
   xlibs.xprop
+  xlibs.libXScrnSaver # for argyllcms
 
   # GTK theme
   breeze-gtk
   gnome-breeze
   gnome3.gnome_themes_standard
+
+  # keyring (e.g. for Skype)
+  gnome3.gnome_keyring
 
   # Qt theme
   breeze-qt5
@@ -234,10 +259,13 @@ environment.systemPackages = with pkgs; [
 ];
 
 # needed by mendeley
-services.dbus.packages = [ pkgs.gnome3.gconf.out ];
+services.dbus.packages = [ pkgs.gnome3.gconf.out pkgs.gnome3.dconf ];
 
 # needed by gtk apps
 services.gnome3.at-spi2-core.enable = true;
+
+# needed by skype
+services.gnome3.gnome-keyring.enable = true;
 
 # Make applications find files in <prefix>/share
 environment.pathsToLink = [ "/share" "/etc/gconf" ];

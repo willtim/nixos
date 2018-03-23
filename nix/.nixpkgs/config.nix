@@ -8,7 +8,7 @@ packageOverrides = super: let self = super.pkgs; in with self; rec {
     name = "ghc-env";
     paths = with haskellPackages; [
       (ghcWithHoogle (import ./haskell-packages.nix))
-      alex happy 
+      alex happy
       # cabal-install cabal2nix
       ghc-core
       hlint
@@ -39,6 +39,8 @@ packageOverrides = super: let self = super.pkgs; in with self; rec {
          arandr          # generate xrandr commands
 
          scrot           # screen capture util
+         guvcview        # webcam capture
+
          # termite       # terminal emulator with fontconfig support
          unclutter
 
@@ -47,12 +49,20 @@ packageOverrides = super: let self = super.pkgs; in with self; rec {
          recoll          # xapian search engine UI
          mupdf           # fast pdf viewer lib
          llpp            # less-like pdf viewer using mupdf (in OCaml!)
+         evince          # gnome pdf viewer
+         gv              # ghostscript viewer
+
          ranger          # ncurses file browser
+         pcmanfm-qt      # simple graphical file manager
 
          redshift        # colour temperature adjustment for night time (gradual unlike xflux)
          # feh             # image viewer, useful to call with -ZFx
          sxiv            # simple bloat-free image viewer with thumbnails
          python27Packages.udiskie # automounter
+
+         gnome3.seahorse # GnuPG passwords and keys
+
+         veracrypt       # encrypted disk images
          ];
   };
 
@@ -61,15 +71,16 @@ packageOverrides = super: let self = super.pkgs; in with self; rec {
      name = "apps";
      paths = [
          # install and upgrade these manually
-         # google-chrome
          # mendeley
          # dropbox
+         # firefox-bin
+         # thunderbird-bin
+         # skypeforlinux
+         # tor-browser-bundle-bin
+         # google-chrome
+         # chromium
 
          emacs
-
-         # chromium
-         # firefox
-         # thunderbird
 
          libreoffice
          gnuplot_qt
@@ -81,14 +92,17 @@ packageOverrides = super: let self = super.pkgs; in with self; rec {
          # keepassx2       # qt-based password manager
 
          inkscape        # vector drawing
-         # digikam         # photo management/viewer (needs kde themes below)
+         digikam         # photo management/viewer (needs kde themes below)
          # darktable       # RAW workflow
          # xournal         # tablet note taking
+
+         calibre         # ebook viewer
 
          kdiff3          # diff/merge tool
          xarchiver       # simple UI to browse archives
          httrack         # website downloader
 
+         audacity               # audio editor
          deadbeef-with-plugins  # music player
              # always check hardware is receiving 44.1Khz and no resampling
              # is happening!
@@ -125,7 +139,15 @@ packageOverrides = super: let self = super.pkgs; in with self; rec {
          youtube-dl
          anki            # flashcards
 
-         # kde_workspace  # dark theme for digikam (!)
+         displaycal      # display profiler
+
+         mixxx           # DJ software
+
+         deluge          # bittorrent client
+
+         steam           # needed for Civ6
+
+         # kde_workspace  # dark theme for digikam?
          # kde_baseapps
          # kdeadmin
          # desktopthemes
@@ -150,6 +172,10 @@ packageOverrides = super: let self = super.pkgs; in with self; rec {
 
   polybar = pkgs.polybar.override {
     i3Support = true;
+  };
+
+  mixxx = pkgs.mixxx.override {
+    aacSupport = true;
   };
 
 # These must be built from source to get official branding - takes a long time!

@@ -19,7 +19,7 @@
   boot.kernelModules       = [ "kvm-intel" ]; # second-stage boot
   boot.extraModulePackages = [ ];
   boot.blacklistedKernelModules = [ "pcspkr" "acer_wmi" ];
-  boot.kernelPackages = pkgs.linuxPackages_4_13;
+  boot.kernelPackages = pkgs.linuxPackages_4_14;
 
   boot.initrd.kernelModules = [
    # Specify all kernel modules that are necessary for mounting the root
@@ -63,6 +63,15 @@
   };
   swapDevices = [ { device = "/dev/mapper/vg-swap"; } ];
 
+  # Additional binary caches here
+  nix = {
+    trustedBinaryCaches = [ http://hydra.cryp.to https://hydra.iohk.io ];
+    binaryCachePublicKeys = [
+      "hydra.cryp.to-1:8g6Hxvnp/O//5Q1bjjMTd5RO8ztTsG8DKPOAg9ANr2g="
+      "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ="
+    ];
+  };
+
   # Network
   networking = {
     hostName = "x1c";   # Define your hostname.
@@ -84,6 +93,10 @@
   hardware.enableAllFirmware = true;
 
   hardware.pulseaudio.enable = true;
+
+  # for Steam
+  hardware.opengl.driSupport32Bit = true;
+  hardware.pulseaudio.support32Bit = true;
 
   # cannot enable with virtual box guest additions
   # security.grsecurity.enable = true;
@@ -119,6 +132,10 @@
       drivers = [ pkgs.hplipWithPlugin ];
     };
 
+    # manage, install and generate color profiles
+    # USE argyllCMS dispwin instead
+    colord.enable = true;
+
     # udev.packages = with pkgs; [ ];
 
     # Perform keyboard mappings specific to the X1C laptop keyboard.
@@ -137,6 +154,12 @@
 
     # Maximum trackpoint sensitivity and speed
     udev.extraRules = ''
+    SUBSYSTEMS=="usb", ATTRS{idVendor}=="2c97", ATTRS{idProduct}=="0000", MODE="0660", TAG+="uaccess", TAG+="udev-acl" OWNER="tim"
+    SUBSYSTEMS=="usb", ATTRS{idVendor}=="2c97", ATTRS{idProduct}=="0001", MODE="0660", TAG+="uaccess", TAG+="udev-acl" OWNER="tim"
+
+    KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0660", GROUP="plugdev", ATTRS{idVendor}=="2c97"
+    KERNEL=="hidraw*", SUBSYSTEM=="hidraw", MODE="0660", GROUP="plugdev", ATTRS{idVendor}=="2581"
+
     KERNEL=="serio2", SUBSYSTEM=="serio", DRIVERS=="psmouse", ATTR{sensitivity}:="255", ATTR{speed}:="255"
     '';
   };
@@ -152,7 +175,7 @@
   #   };
   #   wantedBy = [ "default.target" ];
   # };
-  
+
   systemd.services.my-trackpoint = {
     enable = true;
     description = "Ensure trackpoint settings are set";
