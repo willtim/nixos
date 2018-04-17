@@ -138,9 +138,9 @@ services.xserver = {
      [ -f ~/.Xmodmap ] && xmodmap ~/.Xmodmap
 
      # Restore color profile.
-     # this works around a bug in xiccd, whereby
-     # it doesn't die after logout
-     pgrep xiccd>/dev/null || ${pkgs.xiccd}/bin/xiccd &
+     # NOTE: xiccd is too buggy and sometimes eats 100% cpu... and seems unmaintained
+     # pgrep xiccd>/dev/null || ${pkgs.xiccd}/bin/xiccd &
+     {pkgs.argyllcms}/bin/dispwin -I "/home/tim/.local/share/icc/B140HAN01.7 #1 2018-03-09 13-53 2.2 F-S XYZLUT+MTX.icc"
 
      # background image - nitrogen has better multihead support than feh
      ${pkgs.nitrogen}/bin/nitrogen --restore
@@ -214,7 +214,7 @@ environment.systemPackages = with pkgs; [
   unclutter
 
   argyllcms # create color profiles
-  xiccd     # color management
+  # xiccd   # buggy 100% CPU color management
   compton
   nitrogen  # better multihead support than feh
   pinentry_qt4
@@ -242,7 +242,7 @@ environment.systemPackages = with pkgs; [
 
   # Qt theme
   breeze-qt5
-  breeze-qt4
+  # breeze-qt4
 
   # Icons (Main)
   iconTheme

@@ -19,7 +19,7 @@
   boot.kernelModules       = [ "kvm-intel" ]; # second-stage boot
   boot.extraModulePackages = [ ];
   boot.blacklistedKernelModules = [ "pcspkr" "acer_wmi" ];
-  boot.kernelPackages = pkgs.linuxPackages_4_14;
+  # boot.kernelPackages = pkgs.linuxPackages_4_14;
 
   boot.initrd.kernelModules = [
    # Specify all kernel modules that are necessary for mounting the root
@@ -62,15 +62,6 @@
     options = ["discard" "noatime" "nodiratime"];
   };
   swapDevices = [ { device = "/dev/mapper/vg-swap"; } ];
-
-  # Additional binary caches here
-  nix = {
-    trustedBinaryCaches = [ http://hydra.cryp.to https://hydra.iohk.io ];
-    binaryCachePublicKeys = [
-      "hydra.cryp.to-1:8g6Hxvnp/O//5Q1bjjMTd5RO8ztTsG8DKPOAg9ANr2g="
-      "hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ="
-    ];
-  };
 
   # Network
   networking = {
@@ -134,7 +125,7 @@
 
     # manage, install and generate color profiles
     # USE argyllCMS dispwin instead
-    colord.enable = true;
+    # colord.enable = true;
 
     # udev.packages = with pkgs; [ ];
 

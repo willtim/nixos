@@ -36,45 +36,45 @@
   swapDevices = [ { device = "/dev/sda2"; } ];
 
   # zfs legacy-style mounts
-  fileSystems."/tank/backups" = { 
+  fileSystems."/tank/backups" = {
     device = "tank/backups";
     fsType = "zfs";
   };
-  fileSystems."/tank/backups/tim" = { 
+  fileSystems."/tank/backups/tim" = {
     device = "tank/backups/tim";
     fsType = "zfs";
   };
-  fileSystems."/tank/backups/karen" = { 
+  fileSystems."/tank/backups/karen" = {
     device = "tank/backups/karen";
     fsType = "zfs";
   };
-  fileSystems."/tank/music" = { 
+  fileSystems."/tank/music" = {
     device = "tank/music";
     fsType = "zfs";
   };
-  fileSystems."/tank/photos" = { 
+  fileSystems."/tank/photos" = {
     device = "tank/photos";
     fsType = "zfs";
   };
-  fileSystems."/tank/videos" = { 
+  fileSystems."/tank/videos" = {
     device = "tank/videos";
     fsType = "zfs";
   };
 
   # for sharing out read-only backup snapshots
-  fileSystems."/tank/music/tim" = { 
+  fileSystems."/tank/music/tim" = {
     device = "/tank/backups/tim/.zfs/snapshot/latest/timwi/Music";
     options = ["bind"];
   };
-  fileSystems."/tank/music/karen" = { 
+  fileSystems."/tank/music/karen" = {
     device = "/tank/backups/karen/.zfs/snapshot/latest2/karencornish/Music";
     options = ["bind"];
   };
-  fileSystems."/tank/photos/tim" = { 
+  fileSystems."/tank/photos/tim" = {
     device = "/tank/backups/tim/.zfs/snapshot/latest/timwi/Pictures/Exports";
     options = ["bind"];
   };
-  fileSystems."/tank/photos/karen" = { 
+  fileSystems."/tank/photos/karen" = {
     device = "/tank/backups/karen/.zfs/snapshot/latest2/karencornish/Pictures";
     options = ["bind"];
   };
