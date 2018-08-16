@@ -2,6 +2,14 @@
 
 packageOverrides = super: let self = super.pkgs; in with self; rec {
 
+  profiledHaskellPackages = self.haskellPackages.override {
+      overrides = self: super: {
+        mkDerivation = args: super.mkDerivation (args // {
+          enableLibraryProfiling = true;
+        });
+      };
+    };
+
   # TODO change to a function
   # http://stackoverflow.com/questions/27728838/using-hoogle-in-a-haskell-development-environment-on-nix
   ghcEnv = pkgs.buildEnv {
@@ -17,9 +25,10 @@ packageOverrides = super: let self = super.pkgs; in with self; rec {
       # djinn mueval
       # lambdabot
       threadscope
-      timeplot splot
+      timeplot 
+      # splot
       # liquidhaskell liquidhaskell-cabal
-      idris
+      # idris
       # Agda
       ];
     };
@@ -53,7 +62,8 @@ packageOverrides = super: let self = super.pkgs; in with self; rec {
          gv              # ghostscript viewer
 
          ranger          # ncurses file browser
-         pcmanfm-qt      # simple graphical file manager
+         # pcmanfm-qt      # simple graphical file manager
+         gnome3.nautilus   # GNOME3 file manager
 
          redshift        # colour temperature adjustment for night time (gradual unlike xflux)
          # feh             # image viewer, useful to call with -ZFx

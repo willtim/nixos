@@ -8,4 +8,5 @@ parallel
 monad-par
 async
 QuickCheck
+streaming
 ]

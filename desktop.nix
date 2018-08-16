@@ -48,6 +48,7 @@ fonts = {
        pkgs.ttf_bitstream_vera
        pkgs.vistafonts          # e.g. consolas
        pkgs.font-awesome-ttf    # needed by my i3 config!
+       pkgs.opensans-ttf        # my favourite sans font
        # pkgs.source-code-pro
     ];
     fontconfig = {
