@@ -82,7 +82,6 @@ packageOverrides = super: let self = super.pkgs; in with self; rec {
      paths = [
          # install and upgrade these manually
          # mendeley
-         # dropbox
          # firefox-bin
          # thunderbird-bin
          # skypeforlinux

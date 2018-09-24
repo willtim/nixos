@@ -167,6 +167,7 @@ pwgen
      wget
      which
      xfsprogs        # XFS filesystem utils
+     exfat           # for SD cards
      zip
 
      gnupg
@@ -174,6 +175,7 @@ pwgen
      pcsctools
      libu2f-host
      yubikey-personalization
+     wireguard
 
    ];
 

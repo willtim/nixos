@@ -151,7 +151,7 @@ services.xserver = {
      # lock the screen 10 seconds later.
      # TODO nixify xss-lock scripts
      ${pkgs.xlibs.xset}/bin/xset s 600 10
-     ${pkgs.xss-lock}/bin/xss-lock -n ~/bin/lock-notify.sh -- ~/bin/lock.sh &
+     ${pkgs.xss-lock}/bin/xss-lock -n /home/tim/bin/lock-notify.sh -- /home/tim/bin/lock.sh &
 
      # disable PC speaker beep
      # ${pkgs.xlibs.xset}/bin/xset -b

@@ -90,6 +90,9 @@
       allowPing = true;
       allowedTCPPorts = [ 22 80 443 139 445 9000 9090 3483 32400];
       allowedUDPPorts = [ 137 138 3483 ];
+      allowedUDPPortRanges = [
+        { from = 60001; to = 60010; } # for mosh
+        ];
     };
     # connman.enable = true;
   };
@@ -104,6 +107,13 @@
     thinkfan.enable = true; # cannot use thermald on this old machine
     tlp.enable = true;
     locate.enable = true;
+
+    syncthing = {
+      enable = true;
+      user = "tim";
+      dataDir = "/home/tim/.config/syncthing";
+      openDefaultPorts = true;
+    };
 
     # By default, the auto-snapshot service will keep the latest four
     # 15-minute, 24 hourly, 7 daily, 4 weekly and 12 monthly snapshots.
@@ -144,6 +154,7 @@
       enable = true;
       passwordAuthentication = false;
     };
+
   };
 
   # Additional users
@@ -190,21 +201,6 @@
            -v /tmp/squeezebox:/srv/squeezebox \
            -v /tank/music:/srv/music \
            larsks/logitech-media-server
-      '';
-    };
-
-  systemd.services.plexmediaserver = {
-      description = "Plex Media Server";
-      after = [ "network.target" "docker.socket" ];
-      requires = [ "docker.socket" ];
-      wantedBy = [ "multi-user.target" ];
-      serviceConfig.ExecStart = ''${pkgs.docker}/bin/docker run -d \
-          --net=host \
-          -e TZ="Europe/London" \
-          -v /tmp/plex/database:/config \
-          -v /tmp/plex/transcode:/transcode \
-          -v /tank/photos:/data \
-          plexinc/pms-docker
       '';
     };
 }

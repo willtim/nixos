@@ -24,7 +24,7 @@
   boot.initrd.kernelModules = [
    # Specify all kernel modules that are necessary for mounting the root
    # file system.
-   "vfat" "i915" "nvme" "xfs" "dm_mod" "sd_mod" "xhci_pci" "usb_storage" "rtsx_pci_sdmmc" "nls_cp437" "nls_iso8859-1" "aesni_intel" "thinkpad_acpi"
+   "vfat" "i915" "nvme" "xfs" "dm_mod" "sd_mod" "xhci_pci" "usb_storage" "rtsx_pci_sdmmc" "nls_cp437" "nls_iso8859-1" "aesni_intel" "thinkpad_acpi" "exfat"
   ];
 
   # only use intel_pstate on systems which support hardware p-state control (HWP)
@@ -47,6 +47,7 @@
         allowDiscards = true;
     }];
 
+  virtualisation.libvirtd.enable = true;
 
   # File systems
   # explicitly configure fileSystems here, not in hardware-configuration.nix
@@ -123,6 +124,13 @@
       drivers = [ pkgs.hplipWithPlugin ];
     };
 
+    syncthing = {
+      enable = true;
+      user = "tim";
+      dataDir = "/home/tim/.config/syncthing";
+      openDefaultPorts = true;
+    };
+
     # manage, install and generate color profiles
     # USE argyllCMS dispwin instead
     # colord.enable = true;
@@ -144,7 +152,11 @@
     '';
 
     # Maximum trackpoint sensitivity and speed
+    # Monitor hot-plugging from KVM switching
     udev.extraRules = ''
+
+    ACTION=="change", SUBSYSTEM=="drm", ENV{HOTPLUG}=="1", RUN+="/home/tim/bin/toggle-display"
+
     SUBSYSTEMS=="usb", ATTRS{idVendor}=="2c97", ATTRS{idProduct}=="0000", MODE="0660", TAG+="uaccess", TAG+="udev-acl" OWNER="tim"
     SUBSYSTEMS=="usb", ATTRS{idVendor}=="2c97", ATTRS{idProduct}=="0001", MODE="0660", TAG+="uaccess", TAG+="udev-acl" OWNER="tim"
 
