@@ -128,7 +128,6 @@ pwgen
      ncdu            # disk-usage analysis
      netcat
      nettools
-     nix-repl
      nox             # nixos package search
      nmap
      nasm            # assembler

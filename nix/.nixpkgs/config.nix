@@ -68,7 +68,7 @@ packageOverrides = super: let self = super.pkgs; in with self; rec {
          redshift        # colour temperature adjustment for night time (gradual unlike xflux)
          # feh             # image viewer, useful to call with -ZFx
          sxiv            # simple bloat-free image viewer with thumbnails
-         python27Packages.udiskie # automounter
+         udiskie         # automounter
 
          gnome3.seahorse # GnuPG passwords and keys
 
@@ -79,6 +79,7 @@ packageOverrides = super: let self = super.pkgs; in with self; rec {
   # large app packages
   appsEnv = pkgs.buildEnv {
      name = "apps";
+     meta.priority = "10";
      paths = [
          # install and upgrade these manually
          # mendeley

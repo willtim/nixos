@@ -255,12 +255,13 @@ environment.systemPackages = with pkgs; [
 
   # These packages are used in autostart, they need to in systemPackages
   # or icons won't work correctly
-  pythonPackages.udiskie connman-notify # skype
+  udiskie
+  connman-notify
 
 ];
 
 # needed by mendeley
-services.dbus.packages = [ pkgs.gnome3.gconf.out pkgs.gnome3.dconf ];
+services.dbus.packages = [ pkgs.gnome3.dconf ];
 
 # needed by gtk apps
 services.gnome3.at-spi2-core.enable = true;
@@ -269,7 +270,7 @@ services.gnome3.at-spi2-core.enable = true;
 services.gnome3.gnome-keyring.enable = true;
 
 # Make applications find files in <prefix>/share
-environment.pathsToLink = [ "/share" "/etc/gconf" ];
+environment.pathsToLink = [ "/share" ];
 
 services.udev = {
     packages = [ pkgs.libmtp ];
