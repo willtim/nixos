@@ -1,4 +1,4 @@
-{ config, pkgs, expr, buildVM, ... }:
+{ config, pkgs, expr, buildVM, lib, ... }:
 
 let
   iconTheme = pkgs.breeze-icons.out;
@@ -12,6 +12,11 @@ let
     # GTK3: add breeze theme to search path for themes
     # (currently, we need to use gnome-breeze because the GTK3 version of breeze is broken)
     export XDG_DATA_DIRS="${pkgs.gnome-breeze}/share:$XDG_DATA_DIRS"
+
+    # Also add these dirs for flatpak:
+    #    '/var/lib/flatpak/exports/share'
+    #    '/home/tim/.local/share/flatpak/exports/share'
+    export XDG_DATA_DIRS="/var/lib/flatpak/exports/share:$HOME/.local/share/flatpak/exports/share:$XDG_DATA_DIRS"
 
     # GTK3: add /etc/xdg/gtk-3.0 to search path for settings.ini
     # We use /etc/xdg/gtk-3.0/settings.ini to set the icon and theme name for GTK 3
@@ -41,13 +46,12 @@ nixpkgs.config = {
 
 fonts = {
     enableFontDir = true;
-    enableCoreFonts = true; # MS proprietary Core Fonts
     enableGhostscriptFonts = true;
     fonts = [
        pkgs.corefonts
        pkgs.ttf_bitstream_vera
        pkgs.vistafonts          # e.g. consolas
-       pkgs.font-awesome-ttf    # needed by my i3 config!
+       pkgs.font-awesome_4      # needed by my i3 config!
        pkgs.opensans-ttf        # my favourite sans font
        # pkgs.source-code-pro
     ];
@@ -59,18 +63,21 @@ fonts = {
 
 # needed to unlock gnome_keyring
 # set the keyring password to be the same as the login
-security.pam.services = [
-  { name = "gnome_keyring";
+security.pam.services = { "gnome_keyring" = 
+  { 
     text = ''
       auth     optional    ${pkgs.gnome3.gnome_keyring}/lib/security/pam_gnome_keyring.so
       session  optional    ${pkgs.gnome3.gnome_keyring}/lib/security/pam_gnome_keyring.so auto_start
 
       password  optional    ${pkgs.gnome3.gnome_keyring}/lib/security/pam_gnome_keyring.so
     '';
-  }
-];
+  };
+};
 
 services.accounts-daemon.enable = true; # needed by lightdm
+
+services.flatpak.enable = true;
+xdg.portal.enable = true; # required by flatpak
 
 # Required for our screen-lock-on-suspend functionality
 services.logind.extraConfig = ''
@@ -114,8 +121,8 @@ services.xserver = {
     '';
 
   xkbOptions = "eurosign:e";
+
   windowManager.i3.enable = true;
-  # windowManager.default = "i3";
   displayManager.lightdm = {
     enable = true;
 #    autoLogin = {
@@ -198,9 +205,17 @@ environment.etc."xdg/gtk-3.0/settings.ini" = {
 };
 
 environment.systemPackages = with pkgs; [
+
+  ############################################################
+  # Gnome desktop support
+  # gnome-shell-extension-appindicator-32 # systray icon support
+
+  ############################################################
   # i3 desktop support
+
   rxvt_unicode
-  cmst
+  # cmst   # for connman
+  networkmanagerapplet
   desktop_file_utils
   dmenu
   dunst
@@ -218,9 +233,10 @@ environment.systemPackages = with pkgs; [
   # xiccd   # buggy 100% CPU color management
   compton
   nitrogen  # better multihead support than feh
-  pinentry_qt4
+  # pinentry_qt4
 
   xlibs.xbacklight
+  xlibs.xclock
   xlibs.xmodmap
   xlibs.xev
   xlibs.xinput
@@ -258,7 +274,143 @@ environment.systemPackages = with pkgs; [
   udiskie
   connman-notify
 
+  cmst            # connman UI
+  nitrogen        # background previewer/setter
+  pavucontrol     # audio mixer
+  copyq           # clipboard manager
+  rofi            # drop-in dmenu replacement (xft support)
+  arandr          # generate xrandr commands
+
+  scrot           # screen capture util
+  guvcview        # webcam capture
+
+  # termite       # terminal emulator with fontconfig support
+  unclutter
+
+  wmname          # set the windowmanager name
+
+  recoll          # xapian search engine UI
+  mupdf           # fast pdf viewer lib
+  llpp            # less-like pdf viewer using mupdf (in OCaml!)
+  evince          # gnome pdf viewer
+  gv              # ghostscript viewer
+
+  ranger          # ncurses file browser
+  # pcmanfm-qt      # simple graphical file manager
+  gnome3.nautilus   # GNOME3 file manager
+
+  redshift        # colour temperature adjustment for night time (gradual unlike xflux)
+  # feh             # image viewer, useful to call with -ZFx
+  sxiv            # simple bloat-free image viewer with thumbnails
+  udiskie         # automounter
+
+  gnome3.seahorse # GnuPG passwords and keys
+
+  veracrypt       # encrypted disk images
+  protonmail-bridge
+
+  ############################################################
+  # Applications
+
+  mendeley
+
+  ################### firejailed
+  # firefox-bin
+  # thunderbird-bin
+  # skypeforlinux
+  # tor-browser-bundle-bin
+  # google-chrome
+  # keepassxc       # qt-based password manager
+  # vlc             # plays anything
+  # mpv             # good hardware video decoding
+
+  emacs
+
+  libreoffice
+  gnuplot_qt
+  gtypist
+  # gimp
+  krita
+
+  weechat
+
+  inkscape        # vector drawing
+  digikam         # photo management/viewer (needs kde themes below)
+  # darktable       # RAW workflow
+  # xournal         # tablet note taking
+
+  calibre         # ebook viewer
+
+  kdiff3          # diff/merge tool
+  xarchiver       # simple UI to browse archives
+  httrack         # website downloader
+
+  audacity               # audio editor
+  deadbeef-with-plugins  # music player
+      # always check hardware is receiving 44.1Khz and no resampling
+      # is happening!
+      # use "pactl info" and e.g. cat /proc/asound/card0/pcm0p/sub0/hw_params
+      # plugins inside ~/.local/lib/deadbeef
+
+  smplayer        # richer UI for mpv
+
+  # ardour        # DAW
+  # guitarix      # virtual amp
+
+  # zathura         # configure for mupdf: zathura.useMupdf = true;
+
+  rdesktop        # windows RDP client
+
+  go-mtpfs        # transfer files to android phone: go-mtpfs ~/mnt, fusermount -u ~/mnt
+  unetbootin      # make bootable USB keys from ISO images
+
+  # abcde           # cd-ripping automation script - need 2.7.1+ for qaac
+
+  poppler_utils   # pdf library and utils
+  graphviz
+  imagemagick
+
+  wine            # for qaac and neroAacTag
+
+  # python27Full    # put python in nix-profile
+
+  haskellPackages.yeganesh
+  haskellPackages.pandoc
+
+  youtube-dl
+  anki            # flashcards
+
+  displaycal      # display profiler
+
+  mixxx           # DJ software
+
+  # deluge          # bittorrent client
+
+  # steam           # needed for Civ6
+
+  # kde_workspace  # dark theme for digikam?
+  # kde_baseapps
+  # kdeadmin
+  # desktopthemes
 ];
+
+# Add firejail sandboxes
+# TODO these need different names in order to prevent collisions with
+# the standard binaries that get added to the global path. At least
+# we can be sure that the firejail wrapping is working this way!
+programs.firejail = {
+  enable = true;
+  wrappedBinaries = {
+    firefox = "${lib.getBin pkgs.firefox-bin}/bin/firefox";
+    thunderbird = "${lib.getBin pkgs.thunderbird-bin}/bin/thunderbird";
+    # tor-browser = "${lib.getBin pkgs.tor-browser-bundle-bin}/bin/tor-browser";
+    keepassxc = "${lib.getBin pkgs.keepassxc}/bin/keepassxc";
+    mpv = "${lib.getBin pkgs.mpv}/bin/mpv";
+    vlc = "${lib.getBin pkgs.vlc}/bin/vlc";
+    discord = "${lib.getBin pkgs.discord}/bin/Discord";
+  };
+};
+
 
 # needed by mendeley
 services.dbus.packages = [ pkgs.gnome3.dconf ];
@@ -268,6 +420,9 @@ services.gnome3.at-spi2-core.enable = true;
 
 # needed by skype
 services.gnome3.gnome-keyring.enable = true;
+
+# needed for files server shares
+services.gvfs.enable = true;
 
 # Make applications find files in <prefix>/share
 environment.pathsToLink = [ "/share" ];

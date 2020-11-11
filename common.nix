@@ -2,13 +2,9 @@
 
 {
 
-  # Select internationalisation properties.
-  i18n = {
-    consoleFont = "lat9w-16";
-    # consoleFont = "sun12x22";
-    consoleKeyMap = "uk";
-    defaultLocale = "en_GB.UTF-8";
-  };
+  console.font = "lat9w-16"; # "sun12x22";  
+  console.keyMap = "uk";
+  i18n.defaultLocale = "en_GB.UTF-8";
 
   time.timeZone = "Europe/London";
 
@@ -19,13 +15,8 @@
     zathura.useMupdf = true;
 
     firefox = {
-      enableGoogleTalkPlugin = true;
-      enableAdobeFlash = true;
-    };
-
-    chromium = {
-      enablePepperFlash = true; # Chromium's non-NSAPI alternative to Adobe Flash
-      enablePepperPDF = true;
+      # enableGoogleTalkPlugin = true;
+      # enableAdobeFlash = true;
     };
 
     # These must be built from source to get official branding - takes a long time!
@@ -87,6 +78,9 @@ pwgen
      dmidecode       # read and display firmware info
 
      file
+
+     firejail        # lightweight security sandbox
+
      flac            # lossless audio encoder
 
      libcdio         # abcde dependencies
@@ -142,8 +136,8 @@ pwgen
      pwgen
      p7zip
 
-     rfkill          # query, enable and disable wireless devices
      rlwrap          # readline wrap
+     ripgrep         # fast grep
      rsync
 
      silver-searcher # a.k.a. ag
@@ -162,6 +156,7 @@ pwgen
      unrar
      unzip
      usbutils
+     utillinux
      vim
      wget
      which

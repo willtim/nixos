@@ -19,7 +19,7 @@
   boot.kernelModules       = [ "kvm-intel" ]; # second-stage boot
   boot.extraModulePackages = [ ];
   boot.blacklistedKernelModules = [ "pcspkr" "acer_wmi" ];
-  # boot.kernelPackages = pkgs.linuxPackages_4_14;
+  boot.kernelPackages = pkgs.linuxPackages_4_19;
 
   boot.initrd.kernelModules = [
    # Specify all kernel modules that are necessary for mounting the root
@@ -40,12 +40,12 @@
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
 
-  boot.initrd.luks.devices = [{
-        name = "enc-pv";
+  boot.initrd.luks.devices = { "enc-pv" = {
         device = "/dev/nvme0n1p2";
         preLVM = true;
         allowDiscards = true;
-    }];
+        };
+      };
 
   virtualisation.libvirtd.enable = true;
 
@@ -68,12 +68,18 @@
   networking = {
     hostName = "x1c";   # Define your hostname.
     enableIPv6 = false; # To make wifi work?
+    extraHosts =
+        ''
+        # 0.0.0.0 minecraft.net
+        '';
     firewall = {
       enable = true;
       allowedTCPPorts = [ 22 80 443 ];
+      allowedUDPPorts = [ 20595 ];
     };
-    wireless.enable = true;
-    connman.enable = true;
+    # wireless.enable = true;
+    # connman.enable = true;
+    networkmanager.enable = true;
   };
 
   powerManagement.enable = true;
@@ -95,16 +101,23 @@
 
   security.sudo.enable = true;
 
+  # needed to make firejail work
+  security.wrappers = {
+    firejail = {
+      source = "${pkgs.firejail.out}/bin/firejail";
+    };
+  };
+
   services = {
     acpid.enable = true;
     thermald.enable = true;
 
     tlp.enable = true;
-    tlp.extraConfig = ''
-      DEVICES_TO_DISABLE_ON_STARTUP="bluetooth wwan"
-      DEVICES_TO_ENABLE_ON_STARTUP="wifi"
-      DISK_DEVICES="nvme0n1"
-    '';
+    tlp.settings = { 
+      DEVICES_TO_DISABLE_ON_STARTUP = "bluetooth wwan";
+      DEVICES_TO_ENABLE_ON_STARTUP = "wifi";
+      DISK_DEVICES = "nvme0n1";
+      };
 
     locate.enable = true;
     # fprintd.enable = true; # finger-print daemon and PAM module
@@ -112,11 +125,8 @@
     # check this
     openssh = {
       enable = true;
-      passwordAuthentication = true;
+      passwordAuthentication = false; 
     };
-
-    # enable nixos manual on virtual console 8
-    nixosManual.showManual = true;
 
     # CUPS printing
     printing = {
@@ -125,7 +135,7 @@
     };
 
     syncthing = {
-      enable = true;
+      enable = false; ## TURN OFF AS I AM NOT USING IT
       user = "tim";
       dataDir = "/home/tim/.config/syncthing";
       openDefaultPorts = true;
@@ -155,7 +165,7 @@
     # Monitor hot-plugging from KVM switching
     udev.extraRules = ''
 
-    ACTION=="change", SUBSYSTEM=="drm", ENV{HOTPLUG}=="1", RUN+="/home/tim/bin/toggle-display"
+    # ACTION=="change", SUBSYSTEM=="drm", ENV{HOTPLUG}=="1", RUN+="/home/tim/bin/toggle-display"
 
     SUBSYSTEMS=="usb", ATTRS{idVendor}=="2c97", ATTRS{idProduct}=="0000", MODE="0660", TAG+="uaccess", TAG+="udev-acl" OWNER="tim"
     SUBSYSTEMS=="usb", ATTRS{idVendor}=="2c97", ATTRS{idProduct}=="0001", MODE="0660", TAG+="uaccess", TAG+="udev-acl" OWNER="tim"
@@ -221,4 +231,5 @@
     wantedBy = ["multi-user.target"];
   };
 
+  nix.trustedUsers = ["root" "tim"];
 }

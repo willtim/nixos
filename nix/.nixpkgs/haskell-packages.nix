@@ -9,4 +9,6 @@ monad-par
 async
 QuickCheck
 streaming
+random
+lens
 ]
