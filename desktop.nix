@@ -164,9 +164,9 @@ services.xserver = {
      # ${pkgs.xlibs.xset}/bin/xset -b
 
      # gpg-agent for X session
-     gpg-connect-agent /bye
-     GPG_TTY=$(tty)
-     export GPG_TTY
+     # gpg-connect-agent /bye  # handled by NixOS
+     # GPG_TTY=$(tty)
+     # export GPG_TTY
 
      # use gpg-agent for SSH
      # NOTE: make sure enable-ssh-support is included in ~/.gnupg/gpg-agent.conf
@@ -411,6 +411,11 @@ programs.firejail = {
   };
 };
 
+# gnupg agent support
+programs.gnupg.agent = {
+  enable = true;
+  enableSSHSupport = true;
+};
 
 # needed by mendeley
 services.dbus.packages = [ pkgs.gnome3.dconf ];
@@ -431,7 +436,7 @@ services.udev = {
     packages = [ pkgs.libmtp ];
     extraRules = ''
       # For my Samsung Note 4 using go-mtpfs and fuse
-      SUBSYSTEMS=="usb", ATTRS{idVendor}=="04e8", ATTRS{idProduct}=="6860", MODE="0666", OWNER="tim"
+      # SUBSYSTEMS=="usb", ATTRS{idVendor}=="04e8", ATTRS{idProduct}=="6860", MODE="0666", OWNER="tim"
     '';
  };
 }
